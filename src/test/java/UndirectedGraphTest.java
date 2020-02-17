@@ -1,12 +1,12 @@
 // Ändra inte på paketet
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.*;
+import static org.junit.Assert.*;
 
 public class UndirectedGraphTest {
 
@@ -69,7 +69,7 @@ public class UndirectedGraphTest {
 
     // Nedanstående kod är skriven i ett format för att beskriva grafer som
     // heter dot och kan användas om ni vill ha en bild av den graf som
-    // nedanående test använder. Det finns flera program och webbsidor man kan
+    // nedanstående test använder. Det finns flera program och webbsidor man kan
     // använda för att omvandla koden till en bild, bland annat
     // http://sandbox.kidstrythisathome.com/erdos/
 
@@ -120,7 +120,7 @@ public class UndirectedGraphTest {
         assertEquals(path.size(), nodesInPath.size());
     }
 
-    private void testDepthFirstSearch(String start, String end, int minimumPathLength) {
+    /*private void testDepthFirstSearch(String start, String end, int minimumPathLength) {
         createExampleGraph();
         List<String> path = graph.depthFirstSearch(start, end);
 
@@ -242,6 +242,6 @@ public class UndirectedGraphTest {
 
         assertEquals(6, totalEdges);
         assertEquals(16, totalCost);
-    }
+    }*/
 
 }

@@ -1,215 +1,127 @@
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
-// ToDo: metod för att räkna den totala vikten
 
+    /** hashmap that takes generic type as key, and list with Edge objects **/
     /**
-     * Antalet noder i grafen.
-     *
-     * @return antalet noder i grafen.
-     */
+     * graph HashMap contains Node objects as key, adjacent list of Edge objects as value
+     **/
+    private Map<T, List<Edge<T>>> graph = new HashMap<>();
+    private List<Edge<T>> edges = new ArrayList<>();
+    private boolean visited;
+
+
     public int getNumberOfNodes() {
-        return 0;
+        return graph.keySet().size();
     }
 
 
-
-
-
-
-
-
-
-
-
-    /**
-     * Antalet bågar i grafen.
-     *
-     * @return antalet bågar i grafen.
-     */
     public int getNumberOfEdges() {
-        return 0;
+        return graph.entrySet().size();
     }
 
 
-
-
-
-
-
-
-    /**
-     * Lägger till en ny nod i grafen.
-     *
-     * @param newNode
-     *            datat för den nya noden som ska läggas till i grafen.
-     * @return false om noden redan finns.
-     */
     public boolean add(T newNode) {
-        return false;
+        /** if the node exists, dont add **/
+        if (graph.containsKey(newNode))
+            return false;
+
+        /** if it doesn't exist, add**/
+        /** newNode as key, and create new ArrayList with Edge objects as value (adjacent list) **/
+        graph.put(newNode, new ArrayList<>());
+        return true;
     }
 
 
-
-
-
-
-
-
-
-    /**
-     * Kopplar samman tvä noder i grafen. Eftersom grafen är oriktad så spelar
-     * det ingen roll vilken av noderna som står först. Det är också
-     * fullständigt okej att koppla ihop en nod med sig själv. Däremot tillåts
-     * inte multigrafer. Om två noder kopplas ihop som redan är ihopkopplade
-     * uppdateras bara deras kostnadsfunktion.
-     *
-     * @param node1
-     *            den ena noden.
-     * @param node2
-     *            den andra noden.
-     * @param cost
-     *            kostnaden för att ta sig mellan noderna. Denna måste vara >0
-     *            för att noderna ska kunna kopplas ihop.
-     * @return true om bägge noderna finns i grafen och kan kopplas ihop.
-     */
     public boolean connect(T node1, T node2, int cost) {
+
+        if (!graph.containsKey(node1) || !graph.containsKey(node2) || cost <= 0)
+            return false;
+        if (!isConnected(node1, node2)) {
+            Edge<T> edge = new Edge<T>(node1, node2, cost);
+            graph.get(node1).add(new Edge<T>(node1, node2, cost));
+            graph.get(node1).add(new Edge<T>(node2, node1, cost));
+            edges.add(edge);
+        } else {
+            for (Edge edge : edges) {
+                if (edge.source == node1 && edge.destination == node2 || edge.source == node2 && edge.destination == node1) {
+                    edge.setCost(cost);
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Berättar om två noder är sammanbundan av en båge eller inte.
-     *
-     * @param node1
-     *            den ena noden.
-     * @param node2
-     *            den andra noden.
-     * @return om noderna är sammanbundna eller inte.
-     */
     public boolean isConnected(T node1, T node2) {
-        return false;
+        return graph.get(node1).contains(node2);
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Returnerar kostnaden för att ta sig mellan två noder.
-     *
-     * @param node1
-     *            den ena noden.
-     * @param node2
-     *            den andra noden.
-     * @return kostnaden för att ta sig mellan noderna eller -1 om noderna inte
-     *         är kopplade.
-     */
     public int getCost(T node1, T node2) {
-        return 0;
+        for (Edge edge : edges) {
+            if (edge.source == node1 && edge.source == node2
+                    || edge.source == node2 && edge.source == node1)
+                return edge.getCost();
+        }
+        return -1;
+
     }
 
 
-
-
-
-
-
-
-
-
-
-    /**
-     * Gär en djupet-först-sökning efter en väg mellan två noder.
-     *
-     * Observera att denna metod inte använder sig av viktinformationen.
-     *
-     * @param start
-     *            startnoden.
-     * @param end
-     *            slutnoden.
-     * @return en lista över alla noder på vägen mellan start- och slutnoden. Om
-     *         ingen väg finns är listan tom.
-     */
     public List<T> depthFirstSearch(T start, T end) {
-
+        return null;
     }
 
 
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Gär en bredden-först-sökning efter en väg mellan två noder.
-     *
-     * Observera att denna metod inte använder sig av viktinformationen. Ni ska
-     * alltså inte implementera Dijkstra eller A*.
-     *
-     * @param start
-     *            startnoden.
-     * @param end
-     *            slutnoden.
-     * @return en lista över alla noder på vägen mellan start- och slutnoden. Om
-     *         ingen väg finns är listan tom.
-     */
     public List<T> breadthFirstSearch(T start, T end) {
-
+        return null;
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Returnerar en ny graf som utgär ett minimalt spännande träd till grafen.
-     * Ni kan förutsätta att alla noder ingär i samma graf.
-     *
-     * @return en graf som representerar ett minimalt spånnande träd.
-     */
     public UndirectedGraph<T> minimumSpanningTree() {
-
+        return null;
     }
 
 
+    private class Edge<T> {
+        private T source;
+        private T destination;
+        private int weight;
 
+        public Edge(T source, T destination, int cost) {
+            this.source = source;
+            this.destination = destination;
+            this.weight = weight;
+        }
 
+        public T getDestination() {
+            return destination;
+        }
+
+        public int getCost() {
+            return weight;
+        }
+
+        public void setCost(int cost) {
+            this.weight = cost;
+        }
+
+        @Override
+        public String toString() {
+            return "source: " + source +
+                    "destination: " + destination +
+                    "\ncost: " + weight;
+        }
+    }
 
 
 }
+
+
+
+
