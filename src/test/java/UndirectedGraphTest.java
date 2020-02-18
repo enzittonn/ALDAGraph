@@ -120,7 +120,8 @@ public class UndirectedGraphTest {
         assertEquals(path.size(), nodesInPath.size());
     }
 
-    /*private void testDepthFirstSearch(String start, String end, int minimumPathLength) {
+
+    private void testDepthFirstSearch(String start, String end, int minimumPathLength) {
         createExampleGraph();
         List<String> path = graph.depthFirstSearch(start, end);
 
@@ -152,6 +153,8 @@ public class UndirectedGraphTest {
             testDepthFirstSearch(node, node, 1);
         }
     }
+
+/*
 
     private void testBreadthFirstSearch(String start, String end, int expectedathLength) {
         createExampleGraph();
@@ -242,6 +245,8 @@ public class UndirectedGraphTest {
 
         assertEquals(6, totalEdges);
         assertEquals(16, totalCost);
-    }*/
+    }
+
+     */
 
 }
