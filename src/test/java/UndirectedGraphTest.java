@@ -154,6 +154,10 @@ public class UndirectedGraphTest {
         }
     }
 
+
+
+
+
 /*
 
     private void testBreadthFirstSearch(String start, String end, int expectedathLength) {
@@ -164,6 +168,8 @@ public class UndirectedGraphTest {
 
         testPath(start, end, path);
     }
+
+
 
     @Test
     public void testBreadthFirstSearchFromAToJ() {
@@ -188,6 +194,9 @@ public class UndirectedGraphTest {
         }
     }
 
+    */
+
+    /*
     @Test
     public void testMinimumSpanningTree() {
         createExampleGraph();

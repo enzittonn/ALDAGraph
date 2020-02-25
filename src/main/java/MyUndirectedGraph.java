@@ -11,7 +11,6 @@ public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
      **/
     private Map<T, List<Edge<T>>> graph = new HashMap<>();
     private List<Edge<T>> edges = new ArrayList<>();
-    private boolean visited;
 
 
     public int getNumberOfNodes() {
@@ -27,21 +26,18 @@ public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
     public boolean add(T newNode) {
         /** if the node exists, dont add **/
         if (graph.containsKey(newNode)) {
-            System.out.println("Duplicate not added. \n");
             return false;
         }
 
         /** if it doesn't exist, add**/
         /** newNode as key, and create new ArrayList with Edge objects as value (adjacent list) **/
         graph.put(newNode, new ArrayList<>());
-        System.out.println("Added\n");
         return true;
     }
 
 
     public boolean connect(T node1, T node2, int cost) {
         if (!graph.containsKey(node1) || !graph.containsKey(node2) || cost <= 0) {
-            System.out.println("Something doesnt exist");
             return false;
         }
         if (!isConnected(node1, node2)) {
@@ -51,13 +47,11 @@ public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
             graph.get(node1).add(new Edge<T>(node2, node1, cost));
             edges.add(edge);
             edges.add(edgeBack);
-            System.out.println("Wasn't connected, now connected");
             return true;
         } else {
-            for (Edge edge : edges) {
+            for (Edge<T> edge : edges) {
                 if (edge.source == node1 && edge.destination == node2 || edge.source == node2 && edge.destination == node1) {
                     edge.setCost(cost);
-                    System.out.println("Newly connected");
                     return true;
                 }
             }
@@ -82,23 +76,11 @@ public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
         if ((!isConnected(node1, node2) || !graph.containsKey(node1) || !graph.containsKey(node2)))
             return -1;
 
-        int cost = 0;
-        for (Edge edge : edges) {
+        for (Edge<T> edge : edges) {
             if (edge.source == node1 && edge.destination == node2 || edge.source == node2 && edge.destination == node1)
-                cost = edge.cost;
-            return cost;
+                return edge.cost;
         }
         return -1;
-    }
-
-
-    public List<T> depthFirstSearch(T start, T end) {
-        ArrayList<T> visited = new ArrayList<>();
-        if (!graph.containsKey(start) || !graph.containsKey(end)) {
-            return visited;
-        }
-
-        for (Edge<T> edge : edges)
     }
 
 
@@ -139,7 +121,7 @@ public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
         public String toString() {
             return "source: " + source +
                     "destination: " + destination +
-                    "\ncost: " + cost;
+                    "cost: " + cost;
         }
     }
 
