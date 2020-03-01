@@ -158,7 +158,6 @@ public class UndirectedGraphTest {
 
 
 
-/*
 
     private void testBreadthFirstSearch(String start, String end, int expectedathLength) {
         createExampleGraph();
@@ -194,9 +193,7 @@ public class UndirectedGraphTest {
         }
     }
 
-    */
 
-    /*
     @Test
     public void testMinimumSpanningTree() {
         createExampleGraph();
@@ -256,6 +253,5 @@ public class UndirectedGraphTest {
         assertEquals(16, totalCost);
     }
 
-     */
 
 }

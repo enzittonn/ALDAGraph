@@ -1,57 +1,106 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+// Nyamgarig Naranbaatar nyna2000
+// Samarbete Mosleh Mahamud moma1820
+
+import java.util.*;
 
 public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
+    private Map<T, Map<T, Integer>> graphMap = new HashMap<T, Map<T, Integer>>();
 
-    /** hashmap that takes generic type as key, and list with Edge objects **/
-    /**
-     * graph HashMap contains Node objects as key, adjacent list of Edge objects as value
-     **/
-    private Map<T, List<Edge<T>>> graph = new HashMap<>();
-    private List<Edge<T>> edges = new ArrayList<>();
-
-
+    @Override
     public int getNumberOfNodes() {
-        return graph.keySet().size();
+        return graphMap.size();
     }
 
-
+    @Override
     public int getNumberOfEdges() {
-        return edges.size();
+        for (Map.Entry<T, Map<T, Integer>> n : graphMap.entrySet())
+            return n.getValue().size();
+        return 0;
     }
 
-
+    @Override
     public boolean add(T newNode) {
-        /** if the node exists, dont add **/
-        if (graph.containsKey(newNode)) {
+        // If newNode exists already - return false;
+        if (graphMap.containsKey(newNode))
             return false;
-        }
 
-        /** if it doesn't exist, add**/
-        /** newNode as key, and create new ArrayList with Edge objects as value (adjacent list) **/
-        graph.put(newNode, new ArrayList<>());
+        // Else add
+        graphMap.put(newNode, new HashMap<T, Integer>());
         return true;
     }
 
-
+    @Override
     public boolean connect(T node1, T node2, int cost) {
-        if (!graph.containsKey(node1) || !graph.containsKey(node2) || cost <= 0) {
+        if (!graphMap.containsKey(node1) || !graphMap.containsKey(node2) || cost <= 0)
             return false;
-        }
+
+        Map<T, Integer> source = graphMap.get(node1);
+        Map<T, Integer> destination = graphMap.get(node2);
+
+        destination.put(node1, cost);
+        graphMap.put(node2, destination);
+
+        source.put(node2, cost);
+        graphMap.put(node1, source);
+
+        return true;
+    }
+
+    @Override
+    public boolean isConnected(T node1, T node2) {
+        if (!graphMap.containsKey(node1) || !graphMap.containsKey(node2))
+            return false;
+
+        return graphMap.get(node1).containsKey(node2) || graphMap.get(node2).containsKey(node1);
+    }
+
+    @Override
+    public int getCost(T node1, T node2) {
         if (!isConnected(node1, node2)) {
-            Edge<T> edge = new Edge<T>(node1, node2, cost);
-            Edge<T> edgeBack = new Edge<T>(node2, node1, cost);
-            graph.get(node1).add(new Edge<T>(node1, node2, cost));
-            graph.get(node1).add(new Edge<T>(node2, node1, cost));
-            edges.add(edge);
-            edges.add(edgeBack);
-            return true;
+            return -1;
         } else {
-            for (Edge<T> edge : edges) {
-                if (edge.source == node1 && edge.destination == node2 || edge.source == node2 && edge.destination == node1) {
-                    edge.setCost(cost);
+            for (Map.Entry<T, Integer> edge : graphMap.get(node1).entrySet())
+                if (edge.getKey() == node2 || edge.getKey().equals(node2))
+                    return edge.getValue();
+        }
+        return -1;
+    }
+
+    @Override
+    public List<T> depthFirstSearch(T start, T end) {
+
+        ArrayList<T> empty = new ArrayList<>();
+
+        ArrayList<T> v = new ArrayList<T>();
+
+        ArrayList<T> b = new ArrayList<T>();
+
+
+        depthFirstSearch(start, end, b, v);
+
+        v.add(start);
+
+        Collections.reverse(v);
+
+        if (v.contains(end)) {
+            return v;
+        } else
+            return empty;
+    }
+
+    private boolean depthFirstSearch(T s, T d, ArrayList<T> b, ArrayList<T> ts) {
+
+        b.add(s);
+        //
+        if (s == d) {
+            return true;
+        }
+
+        for (Map.Entry<T, Integer> e : graphMap.get(s).entrySet()) {
+            // edge.get() -> node -  soruce and destination
+            if (!b.contains(e.getKey())) {
+                if (depthFirstSearch(e.getKey(), d, b, ts)) {
+                    ts.add(e.getKey());
                     return true;
                 }
             }
@@ -59,75 +108,108 @@ public class MyUndirectedGraph<T> implements UndirectedGraph<T> {
         return false;
     }
 
+    @Override
+    public List<T> breadthFirstSearch(T start, T end) {
 
-    public boolean isConnected(T node1, T node2) {
-        for (Edge<T> edge : edges) {
-            if (edge.source == node1 && edge.destination == node2
-                    || edge.source == node2 && edge.destination == node1) {
-                return true;
+        ArrayList<T> v = new ArrayList<>();
+        Queue<T> q = new LinkedList<>();
+        ArrayList<T> b = new ArrayList<>();
+
+        q.add(start);
+        b.add(start);
+
+        breadthFirstSearch(end, q, v, b);
+
+        return v;
+
+    }
+
+    private void breadthFirstSearch(T d, Queue<T> q, ArrayList<T> v, ArrayList<T> b) {
+        for (T n : b) {
+            for (Map.Entry<T, Integer> e : graphMap.get(n).entrySet()) {
+                // e.getKey() -> neighbours; destinations
+                if (!v.contains(e.getKey()))
+                    // add to the queue
+                    q.add(e.getKey());
             }
         }
 
-        return false;
-    }
+        b.clear();
+        boolean ex = false;
 
+        while (!q.isEmpty()) {
+            T f = q.remove();
+            v.add(f);
+            b.add(f);
 
-    public int getCost(T node1, T node2) {
-        if ((!isConnected(node1, node2) || !graph.containsKey(node1) || !graph.containsKey(node2)))
-            return -1;
+            if (f == d) {
 
-        for (Edge<T> edge : edges) {
-            if (edge.source == node1 && edge.destination == node2 || edge.source == node2 && edge.destination == node1)
-                return edge.cost;
+                ex = true;
+
+                for (int i = v.size() - 1; i > 0; i--) {
+                    if (!isConnected(v.get(i), v.get(i - 1)))
+                        v.remove(i - 1);
+                }
+
+                for (int k = v.size() - 1; k > 1; k--) {
+                    if (isConnected(v.get(k), v.get(k - 2)))
+                        v.remove(k - 1);
+                }
+                break;
+            }
         }
-        return -1;
+
+        if (!ex)
+            breadthFirstSearch(d, q, v, b);
     }
 
 
-    public List<T> breadthFirstSearch(T start, T end) {
-        return null;
-    }
-
-
+    @Override
     public UndirectedGraph<T> minimumSpanningTree() {
-        return null;
+        MyUndirectedGraph<T> tree = new MyUndirectedGraph<>();
+
+        ArrayList<T> v = new ArrayList<>();
+
+        Map.Entry<T, Map<T, Integer>> current = graphMap.entrySet().iterator().next();
+
+        tree.add(current.getKey());
+        v.add(current.getKey());
+        minimumSpanningTree(tree, v);
+
+        return tree;
     }
 
+    private void minimumSpanningTree(UndirectedGraph<T> tree, ArrayList<T> vs) {
 
-    private class Edge<T> {
-        private T source;
-        private T destination;
-        private int cost;
+        T n = null;
+        int m = Integer.MAX_VALUE;
+        T d = null;
 
-        public Edge(T source, T destination, int cost) {
-            this.source = source;
-            this.destination = destination;
-            this.cost = cost;
-        }
 
-        public T getDestination() {
-            return destination;
-        }
+        if (tree.getNumberOfNodes() >= graphMap.size()) {
+        } else {
 
-        public int getCost() {
-            return cost;
-        }
 
-        public void setCost(int cost) {
-            this.cost = cost;
-        }
+            for (T v : vs) {
+                for (Map.Entry<T, Integer> e : graphMap.get(v).entrySet()) {
+                    if (e.getValue() < m && !vs.contains(e.getKey())) {
 
-        @Override
-        public String toString() {
-            return "source: " + source +
-                    "destination: " + destination +
-                    "cost: " + cost;
+                        m = e.getValue();
+                        d = e.getKey();
+                        n = v;
+                    }
+                }
+
+            }
+
+            if (d != null) {
+                tree.add(d);
+                tree.connect(n, d, m);
+            }
+
+            vs.add(d);
+
+            minimumSpanningTree(tree, vs);
         }
     }
-
-
 }
-
-
-
-
